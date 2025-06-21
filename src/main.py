@@ -27,10 +27,30 @@ class MyHub(RTCommHub):
 
             if target == "broadcast":
                 await self.manager.broadcast(message.to_json())
+
             elif target == "send_personal_message":
                 if len(args) >= 2:
                     recipient, content = args[0], args[1]
                     await self.manager.send_personal_message(content, recipient)
+
+            elif target == "create_group" and len(args) >= 1:
+                self.manager.group_manager.create_group(args[0])
+                await websocket.send_text(f"Group '{args[0]}' created.")
+
+            elif target == "delete_group" and len(args) >= 1:
+                self.manager.group_manager.delete_group(args[0])
+                await websocket.send_text(f"Group '{args[0]}' deleted.")
+
+            elif target == "join_group" and len(args) >= 1:
+                self.manager.group_manager.add_to_group(args[0], client_id)
+                await websocket.send_text(f"Joined group '{args[0]}'")
+
+            elif target == "exit_group" and len(args) >= 1:
+                self.manager.group_manager.remove_from_group(args[0], client_id)
+                await websocket.send_text(f"Left group '{args[0]}'")
+
+            elif target == "send_to_group" and len(args) >= 2:
+                await self.manager.send_to_group(args[0], args[1], exclude_id=client_id)
             else:
                 # echo or custom client-defined method, echoing back
                 await websocket.send_text(message.to_json())

@@ -11,6 +11,13 @@ async def main():
 
     await client.send(InvocationMessage(invocation_id="1", target="broadcast", arguments=["Hello"]))
     await asyncio.sleep(5)
+    await client.send(InvocationMessage("1", "create_group", ["room1"]))
+    await client.send(InvocationMessage("1", "join_group", ["room1"]))
+    await client.send(InvocationMessage("1", "send_to_group", ["room1", "Hello everyone!"]))
+    await asyncio.sleep(1)
+    await client.send(InvocationMessage("1", "exit_group", ["room1"]))
+    await client.send(InvocationMessage("1", "delete_group", ["room1"]))
+    await asyncio.sleep(2)
     await client.close()
 
 if __name__ == "__main__":
